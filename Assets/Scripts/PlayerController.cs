@@ -14,27 +14,28 @@ public class PlayerController : MonoBehaviour
     public float _sideSpeed;
     public float _runningSpeed;
     public float _jumpForce;
-    
+
     [SerializeField] Rigidbody _rigidbody;
-    
+
     bool isGameStarted = false;
-    
+    bool isGameOver = false;
     [SerializeField] Animator _animator;
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        _rigidbody = GetComponent<Rigidbody> ();
+        _rigidbody = GetComponent<Rigidbody>();
         isGameStarted = false;
+        isGameOver = false;
         _currentPos = 0; // 0=Center, 1=Left, 2=Right
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isGameStarted)
+        if (!isGameStarted || !isGameOver)
         {
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 Debug.Log("Game is Started!");
                 isGameStarted = true;
@@ -42,7 +43,7 @@ public class PlayerController : MonoBehaviour
                 _animator.speed = 1.3f;
             }
         }
-        
+
         if (isGameStarted)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y,
@@ -117,5 +118,16 @@ public class PlayerController : MonoBehaviour
         _animator.SetInteger("isJump", 1);
         yield return new WaitForSeconds(0.1f);
         _animator.SetInteger("isJump", 0);
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "object")
+        {
+            isGameStarted = false;
+            isGameOver = true;
+            _animator.applyRootMotion = true;
+            _animator.SetInteger("died", 1);
+
+        }
     }
 }

@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
 
             if (_currentPos == 0)
             {
-                if (Vector2.Distance(transform.position,
+                if (Vector3.Distance(transform.position,
                         new Vector3(Center.position.x, transform.position.y, transform.position.z)) >= 0.1f)
                 {
                     Vector3 dir = new Vector3(Center.position.x, transform.position.y, transform.position.z) -
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (_currentPos == 1)
             {
-                if (Vector2.Distance(transform.position,
+                if (Vector3.Distance(transform.position,
                         new Vector3(Left.position.x, transform.position.y, transform.position.z)) >= 0.1f)
                 {
                     Vector3 dir = new Vector3(Left.position.x, transform.position.y, transform.position.z) -
@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (_currentPos == 2)
             {
-                if (Vector2.Distance(transform.position,
+                if (Vector3.Distance(transform.position,
                         new Vector3(Right.position.x, transform.position.y, transform.position.z)) >= 0.1f)
                 {
                     Vector3 dir = new Vector3(Right.position.x, transform.position.y, transform.position.z) -

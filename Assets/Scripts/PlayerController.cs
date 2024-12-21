@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.UpArrow) && _rigidbody.velocity.y == 0)
             {
                 _rigidbody.velocity = Vector3.up * _jumpForce;
                 StartCoroutine(Jump());
@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "object")
+        if (collision.gameObject.tag == "Object")
         {
             isGameStarted = false;
             isGameOver = true;

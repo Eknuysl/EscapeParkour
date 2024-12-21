@@ -557,7 +557,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 2
   m_Constraints: 126
   m_CollisionDetection: 1
@@ -1034,7 +1034,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 2
   m_Constraints: 126
   m_CollisionDetection: 1
@@ -1269,7 +1269,7 @@ MonoBehaviour:
   Left: {fileID: 1146214352}
   Right: {fileID: 2074624814}
   _sideSpeed: 15
-  _runningSpeed: 25
+  _runningSpeed: 15
   _jumpForce: 10
   _rigidbody: {fileID: 537175423}
   _animator: {fileID: 1532088996}
@@ -1297,8 +1297,8 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
+  m_Interpolate: 2
+  m_Constraints: 122
   m_CollisionDetection: 1
 --- !u!1 &542222950
 GameObject:
@@ -2783,7 +2783,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 2
   m_Constraints: 126
   m_CollisionDetection: 1

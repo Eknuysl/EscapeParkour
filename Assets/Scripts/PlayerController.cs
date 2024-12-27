@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,10 +11,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform Right;
 
     private int _currentPos = 0;
+    
 
     public float _sideSpeed;
     public float _runningSpeed;
-    public float _jumpForce;
+    public float _jumpForce ;
+    public bool magnet = false;
+    public float fallMultiplier = 2.5f; // Hızlı düşüş çarpanı
 
     [SerializeField] Rigidbody _rigidbody;
 
@@ -33,7 +37,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isGameStarted || !isGameOver)
+        if (!isGameStarted && !isGameOver)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -46,70 +50,70 @@ public class PlayerController : MonoBehaviour
 
         if (isGameStarted)
         {
+            // İleri doğru hareket
             transform.position = new Vector3(transform.position.x, transform.position.y,
                 transform.position.z + _runningSpeed * Time.deltaTime);
-            if (_currentPos == 0)
-            {
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                {
-                    _currentPos = 1;
-                }
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
-                {
-                    _currentPos = 2;
-                }
-            }
-            else if (_currentPos == 1)
-            {
-                if (Input.GetKeyDown(KeyCode.RightArrow))
-                {
-                    _currentPos = 0;
-                }
-            }
-            else if (_currentPos == 2)
-            {
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                {
-                    _currentPos = 0;
-                }
-            }
 
-            if (_currentPos == 0)
-            {
-                if (Vector3.Distance(transform.position,
-                        new Vector3(Center.position.x, transform.position.y, transform.position.z)) >= 0.1f)
-                {
-                    Vector3 dir = new Vector3(Center.position.x, transform.position.y, transform.position.z) -
-                                  transform.position;
-                    transform.Translate(dir.normalized * (_sideSpeed * Time.deltaTime), Space.World);
-                }
-            }
-            else if (_currentPos == 1)
-            {
-                if (Vector3.Distance(transform.position,
-                        new Vector3(Left.position.x, transform.position.y, transform.position.z)) >= 0.1f)
-                {
-                    Vector3 dir = new Vector3(Left.position.x, transform.position.y, transform.position.z) -
-                                  transform.position;
-                    transform.Translate(dir.normalized * (_sideSpeed * Time.deltaTime), Space.World);
-                }
-            }
-            else if (_currentPos == 2)
-            {
-                if (Vector3.Distance(transform.position,
-                        new Vector3(Right.position.x, transform.position.y, transform.position.z)) >= 0.1f)
-                {
-                    Vector3 dir = new Vector3(Right.position.x, transform.position.y, transform.position.z) -
-                                  transform.position;
-                    transform.Translate(dir.normalized * (_sideSpeed * Time.deltaTime), Space.World);
-                }
-            }
+            // Sağa ve sola geçiş
+            HandleSideMovement();
 
-            if (Input.GetKeyDown(KeyCode.UpArrow) && _rigidbody.velocity.y == 0)
+            // Zıplama
+            if (Input.GetKeyDown(KeyCode.UpArrow) && Mathf.Abs(_rigidbody.velocity.y) < 0.01f)
             {
                 _rigidbody.velocity = Vector3.up * _jumpForce;
                 StartCoroutine(Jump());
             }
+
+            // Daha hızlı düşüş
+            if (_rigidbody.velocity.y < 0)
+            {
+                _rigidbody.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+            }
+        }
+    }
+
+    void HandleSideMovement()
+    {
+        if (_currentPos == 0)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                _currentPos = 1;
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                _currentPos = 2;
+            }
+        }
+        else if (_currentPos == 1)
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                _currentPos = 0;
+            }
+        }
+        else if (_currentPos == 2)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                _currentPos = 0;
+            }
+        }
+
+        // Yan hareket
+        Vector3 targetPosition = transform.position;
+
+        if (_currentPos == 0)
+            targetPosition.x = Center.position.x;
+        else if (_currentPos == 1)
+            targetPosition.x = Left.position.x;
+        else if (_currentPos == 2)
+            targetPosition.x = Right.position.x;
+
+        if (Vector3.Distance(transform.position, targetPosition) >= 0.1f)
+        {
+            Vector3 dir = targetPosition - transform.position;
+            transform.Translate(dir.normalized * (_sideSpeed * Time.deltaTime), Space.World);
         }
     }
 
@@ -119,7 +123,8 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         _animator.SetInteger("isJump", 0);
     }
-    private void OnCollisionEnter(Collision collision)
+
+    public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Object")
         {
@@ -127,7 +132,14 @@ public class PlayerController : MonoBehaviour
             isGameOver = true;
             _animator.applyRootMotion = true;
             _animator.SetInteger("died", 1);
-
+            Invoke("gameOver", 2);
         }
+        
+        
     }
+    public void gameOver()
+    {
+        SceneManager.LoadScene("Game Over"); 
+    }
+    
 }
